@@ -17,15 +17,11 @@ bot.
 
 import logging
 
-from telegram import Update
-from telegram.ext import Updater, CommandHandler, CallbackContext
-
-
+from src.Commands.ListPayedBillsCommand import ListPayedBillsCommand
+from src.Commands.PayBillCommand import PayBillCommand
 from src.Commands.AddBillCommand import AddBillCommand
 from src.Commands.ListBillsCommand import ListBillsCommand
 from src.TelegramBot.BillsManagerBot import BillsManagerBot
-from src.Data.Database import session
-
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
 )
@@ -40,18 +36,12 @@ def main() -> None:
 
     bot.add_command(AddBillCommand())
     bot.add_command(ListBillsCommand())
+    bot.add_command(PayBillCommand())
+    bot.add_command(ListPayedBillsCommand())
 
     bot.register_handlers()
 
     bot.start_bot()
-    # Start the Bot
-    #updater.start_polling()
-
-    # Block until you press Ctrl-C or the process receives SIGINT, SIGTERM or
-    # SIGABRT. This should be used most of the time, since start_polling() is
-    # non-blocking and will stop the bot gracefully.
-    #updater.idle()
-
 
 if __name__ == '__main__':
     main()

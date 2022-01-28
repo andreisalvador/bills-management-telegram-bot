@@ -12,11 +12,6 @@ class CommandBase(ABC):
     def command_description(self):
         pass
 
-    @property
-    @abstractmethod
-    def is_conversation_command(self):
-        pass
-
     @abstractmethod
     def get_command_instance(self):
         pass
