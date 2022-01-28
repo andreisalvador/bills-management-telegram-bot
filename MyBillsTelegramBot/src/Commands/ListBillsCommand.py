@@ -20,9 +20,5 @@ class ListBillsCommand(CommandBase):
     def command_description(self):
         return "This command allows you to see all you registered bills."
 
-    @property
-    def is_conversation_command(self):
-        return False
-
     def get_command_instance(self):
         return CommandHandler(self.command_name, start)

@@ -9,6 +9,7 @@ from telegram.ext import ConversationHandler, CommandHandler, CallbackContext, M
 from src.Data.Database import session, Bill
 
 from src.Enums.PeriodEnum import PeriodEnum
+from src.Utils.DatabaseUtils import create_new_bill_history
 
 BILL_NAME, BILL_VALUE, EXPIRATION_PERIOD, EXPIRATION_DAY, SAVE = range(5)
 logger = logging.getLogger(__name__)
@@ -32,10 +33,6 @@ class AddBillCommand(CommandBase):
     @property
     def command_description(self):
         return 'This command create new bills to your list of bills to manage them later.'
-
-    @property
-    def is_conversation_command(self):
-        return True
 
     @property
     def command_name(self):
@@ -89,10 +86,13 @@ class AddBillCommand(CommandBase):
         return SAVE
 
     def save_new_bill(self, update: Update, context: CallbackContext):
-        logger.info(f'saved {self.bill_name} = {update.callback_query.data}.')
         update.callback_query.edit_message_reply_markup(None)
 
-        session.add(self.create_new_bill(update.effective_user.id))
+        new_bill = self.create_new_bill(update.effective_user.id)
+        session.add(new_bill)
+        session.flush()
+
+        session.add(create_new_bill_history(new_bill.id, False))
         session.commit()
 
         update.callback_query.edit_message_text('Alright, saved!')

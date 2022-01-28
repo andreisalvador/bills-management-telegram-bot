@@ -8,10 +8,10 @@ check_emoji = '\xE2\x9C\x85'
 
 
 def start(update: Update, context: CallbackContext):
-    bills_payed = session.query(Bill.name, BillHistory.payment_date).join(BillHistory, Bill.id == BillHistory.bill_id).filter(
+    bills_payed = session.query(Bill.name, BillHistory.payment_date, BillHistory.is_paid).join(BillHistory, Bill.id == BillHistory.bill_id).filter(
         Bill.user_id == str(update.effective_user.id)).all()
 
-    message = [f'{bill[0]} was payed in {bill[1]} ✅' for bill in bills_payed]
+    message = [f'{bill[0]} was { "not" if bill[2] == False else "" }  payed in {bill[1]} {"✅" if bill[2] == True else "❌" }' for bill in bills_payed]
 
     update.message.reply_text('\n'.join(message))
 

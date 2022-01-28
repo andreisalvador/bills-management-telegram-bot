@@ -5,6 +5,7 @@ from telegram.ext import ConversationHandler, CommandHandler, CallbackContext, C
 from src.Data.Database import session, Bill, BillHistory
 
 from src.Commands.Base.CommandBase import CommandBase
+from src.Utils.DatabaseUtils import create_new_bill_history
 
 PAY_BILL = 0
 
@@ -19,10 +20,6 @@ def start(update: Update, context: CallbackContext):
     return PAY_BILL
 
 
-def create_new_bill_history(bill_id) -> BillHistory:
-    return BillHistory(is_paid=True, bill_id=bill_id)
-
-
 def cancel(update: Update, context: CallbackContext):
     update.message.reply_text('Operation cancelled.')
     return ConversationHandler.END
@@ -35,7 +32,7 @@ def pay_bill_handler(update: Update, context: CallbackContext):
     selected_bill_name = [bill for bill in context.user_data['user_bills'] if bill.id == int(bill_selected_id)][0][1]
     update.callback_query.edit_message_text(f'{selected_bill_name} payed.')
 
-    session.add(create_new_bill_history(bill_selected_id))
+    session.add(create_new_bill_history(bill_selected_id, True))
     session.commit()
     return ConversationHandler.END
 
@@ -48,10 +45,6 @@ class PayBillCommand(CommandBase):
     @property
     def command_description(self):
         return 'This command allows you to pay a specific bill.'
-
-    @property
-    def is_conversation_command(self):
-        return True
 
     def get_command_instance(self):
         return ConversationHandler(
