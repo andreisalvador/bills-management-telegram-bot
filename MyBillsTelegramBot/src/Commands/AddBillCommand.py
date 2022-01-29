@@ -15,7 +15,7 @@ BILL_NAME, BILL_VALUE, EXPIRATION_PERIOD, EXPIRATION_DAY, SAVE = range(5)
 logger = logging.getLogger(__name__)
 
 
-def add_bill_cancel(update: Update, context: CallbackContext) -> int:
+def add_bill_cancel(update: Update, context: CallbackContext):
     update.message.reply_text('Bye! I hope we can talk again some day.')
 
 

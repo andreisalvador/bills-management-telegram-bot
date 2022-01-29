@@ -17,6 +17,7 @@ bot.
 
 import logging
 
+from src.Commands.DeleteBillCommand import DeleteBillCommand
 from src.Commands.ListBillsStatusCommand import ListBillsStatusCommand
 from src.Commands.PayBillCommand import PayBillCommand
 from src.Commands.AddBillCommand import AddBillCommand
@@ -39,6 +40,7 @@ def main() -> None:
     bot.add_command(ListBillsCommand())
     bot.add_command(PayBillCommand())
     bot.add_command(ListBillsStatusCommand())
+    bot.add_command(DeleteBillCommand())
 
     bot.register_handlers()
 

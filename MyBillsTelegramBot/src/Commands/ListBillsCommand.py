@@ -6,7 +6,7 @@ from src.Commands.Base.CommandBase import CommandBase
 
 
 def start(update: Update, context: CallbackContext):
-    user_bills = session.query(Bill.name, Bill.value).filter_by(user_id=str(update.effective_user.id)).all()
+    user_bills = session.query(Bill.name, Bill.value).filter_by(user_id=update.effective_user.id).all()
     message = [f"Bill name: {bill.name} | Bill value: {bill.value}" for bill in user_bills]
     update.message.reply_text('\n'.join(message))
 
