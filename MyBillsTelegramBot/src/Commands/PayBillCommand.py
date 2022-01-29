@@ -5,13 +5,17 @@ from telegram.ext import ConversationHandler, CommandHandler, CallbackContext, C
 from src.Data.Database import session, Bill, BillHistory
 
 from src.Commands.Base.CommandBase import CommandBase
-from src.Utils.DatabaseUtils import create_new_bill_history
 
 PAY_BILL = 0
 
 
 def start(update: Update, context: CallbackContext):
-    user_bills = session.query(Bill.id, Bill.name).filter_by(user_id=str(update.effective_user.id)).all()
+    user_bills = session.query(Bill.id, Bill.name).join(BillHistory, BillHistory.bill_id == Bill.id).filter(Bill.user_id == update.effective_user.id, BillHistory.is_paid == False).all()
+
+    if len(user_bills) == 0:
+        update.message.reply_text('There is no bills to pay.')
+        return ConversationHandler.END
+
     context.user_data['user_bills'] = user_bills
 
     bills_options = InlineKeyboardMarkup(
@@ -32,7 +36,7 @@ def pay_bill_handler(update: Update, context: CallbackContext):
     selected_bill_name = [bill for bill in context.user_data['user_bills'] if bill.id == int(bill_selected_id)][0][1]
     update.callback_query.edit_message_text(f'{selected_bill_name} payed.')
 
-    session.add(create_new_bill_history(bill_selected_id, True))
+    session.query(BillHistory).filter(BillHistory.bill_id == bill_selected_id).update({'is_paid': True, 'payment_date': datetime.now()})
     session.commit()
     return ConversationHandler.END
 

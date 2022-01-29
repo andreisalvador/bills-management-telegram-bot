@@ -20,14 +20,15 @@ class Bill(Base):
     value = Column(Numeric)
     expiration_day = Column(SmallInteger)
     expiration_period = Column(Enum(PeriodEnum))
-    user_id = Column(String)
+    user_id = Column(Integer)
 
 class BillHistory(Base):
     __tablename__ = 'BillsHistory'
 
     id = Column(Integer, primary_key=True)
-    payment_date = Column(Date, default=datetime.datetime.now())
-    is_paid = Column(Boolean)
+    expiration_date = Column(Date, nullable=False)
+    payment_date = Column(Date, nullable=True)
+    is_paid = Column(Boolean, default=False)
     bill_id = Column(Integer, ForeignKey('Bills.id'))
 
 

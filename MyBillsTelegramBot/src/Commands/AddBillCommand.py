@@ -92,7 +92,9 @@ class AddBillCommand(CommandBase):
         session.add(new_bill)
         session.flush()
 
-        session.add(create_new_bill_history(new_bill.id, False))
+        session.add(create_new_bill_history(new_bill.expiration_day, new_bill.expiration_period, new_bill.id, False))
+        session.flush()
+
         session.commit()
 
         update.callback_query.edit_message_text('Alright, saved!')
