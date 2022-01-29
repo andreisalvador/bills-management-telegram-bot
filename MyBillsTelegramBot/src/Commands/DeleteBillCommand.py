@@ -10,6 +10,12 @@ DELETE = 0
 def start(update: Update, context: CallbackContext):
     user_bills = session.query(Bill.name, Bill.id).filter_by(user_id=update.effective_user.id).all()
 
+    has_bills = len(user_bills) > 0
+
+    if not has_bills:
+        update.message.reply_text('You have no bills')
+        return ConversationHandler.END
+
     bills_options = InlineKeyboardMarkup(
         [[InlineKeyboardButton(bill.name, callback_data=bill.id) for bill in user_bills]])
 
