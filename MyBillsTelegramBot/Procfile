@@ -1,2 +1,0 @@
-web: python3 ./MyBillsTelegramBot/main.py
-worker: python3 ./MyBillsTelegramBot/main.py 
