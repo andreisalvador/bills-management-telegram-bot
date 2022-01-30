@@ -7,7 +7,7 @@ import os
 
 from src.Enums.PeriodEnum import PeriodEnum
 
-engine = create_engine(os.environ['DATABASE_URL'], echo=True)
+engine = create_engine(os.environ['CONNECTION_STRING'], echo=True)
 Session = sessionmaker(bind=engine)
 session = Session()
 Base = declarative_base()
