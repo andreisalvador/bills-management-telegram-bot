@@ -1,5 +1,6 @@
 from telegram import Update
 from telegram.ext import CallbackContext, Updater, CommandHandler
+import os
 
 
 def start(update: Update, context: CallbackContext) -> None:
@@ -10,10 +11,11 @@ def start(update: Update, context: CallbackContext) -> None:
 class BillsManagerBot:
     def __init__(self):
         self.__commands_registered = []
-        self.__updater = Updater("5032805996:AAHa_xgB5J1qZHdUcIgG2loF-k62WGpq8Tw")
+        self.__updater = Updater(os.environ['TELEGRAM_BOT_TOKEN'])
 
     def __commands(self, update: Update, context: CallbackContext) -> None:
         commands_descriptions = {}
+
 
         for command in self.__commands_registered:
             commands_descriptions[f'/{command.command_name}'] = command.command_description

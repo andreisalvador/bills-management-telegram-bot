@@ -3,10 +3,11 @@ import datetime
 from sqlalchemy import create_engine, Column, Integer, String, Enum, Numeric, SmallInteger, Boolean, ForeignKey, Date
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import os
 
 from src.Enums.PeriodEnum import PeriodEnum
 
-engine = create_engine('postgresql://postgres:123456@localhost:5432/test', echo=True)
+engine = create_engine(os.environ['DATABASE_URL'], echo=True)
 Session = sessionmaker(bind=engine)
 session = Session()
 Base = declarative_base()

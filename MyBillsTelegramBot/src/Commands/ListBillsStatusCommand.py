@@ -10,7 +10,7 @@ from src.Commands.Base.CommandBase import CommandBase
 
 def start(update: Update, context: CallbackContext):
     bills_payed = session.query(Bill.name, BillHistory.payment_date, BillHistory.is_paid, BillHistory.expiration_date).join(BillHistory, Bill.id == BillHistory.bill_id).filter(
-        Bill.user_id == str(update.effective_user.id), extract('month', BillHistory.expiration_date) == datetime.datetime.now().month).all()
+        Bill.user_id == update.effective_user.id, extract('month', BillHistory.expiration_date) == datetime.datetime.now().month).all()
 
     has_bills_this_month = len(bills_payed) == 0
 
