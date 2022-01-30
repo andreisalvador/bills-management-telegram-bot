@@ -9,7 +9,7 @@ from telegram.ext import ConversationHandler, CommandHandler, CallbackContext, M
 from src.Data.Database import session, Bill
 
 from src.Enums.PeriodEnum import PeriodEnum
-from src.Utils.DatabaseUtils import create_new_bill_history
+from src.Utils.BillsUtils import create_new_bill_history
 
 BILL_NAME, BILL_VALUE, EXPIRATION_PERIOD, EXPIRATION_DAY, SAVE = range(5)
 logger = logging.getLogger(__name__)
@@ -88,16 +88,20 @@ class AddBillCommand(CommandBase):
     def save_new_bill(self, update: Update, context: CallbackContext):
         update.callback_query.edit_message_reply_markup(None)
 
-        new_bill = self.create_new_bill(update.effective_user.id)
-        session.add(new_bill)
-        session.flush()
+        if update.callback_query.data == 'True':
+            new_bill = self.create_new_bill(update.effective_user.id)
+            session.add(new_bill)
+            session.flush()
 
-        session.add(create_new_bill_history(new_bill.expiration_day, new_bill.expiration_period, new_bill.id, False))
-        session.flush()
+            session.add(create_new_bill_history(new_bill))
+            session.flush()
 
-        session.commit()
+            session.commit()
 
-        update.callback_query.edit_message_text('Alright, saved!')
+            update.callback_query.edit_message_text('Alright, saved!')
+        else:
+            update.callback_query.edit_message_text('Alright, cancelled.')
+
         return ConversationHandler.END
 
     def get_command_instance(self):

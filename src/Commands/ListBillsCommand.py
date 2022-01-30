@@ -10,8 +10,11 @@ def start(update: Update, context: CallbackContext):
 
     has_bills = len(user_bills) > 0
 
-    message = [[f"Bill name: {bill.name} | Bill value: {bill.value}" for bill in user_bills] if has_bills else 'You have no bills']
-    update.message.reply_text(message if has_bills else '\n'.join(message))
+    if not has_bills:
+        update.message.reply_text('You have no bills.')
+    else:
+        message = [f"Bill name: {bill.name} | Bill value: {bill.value}" for bill in user_bills]
+        update.message.reply_text('\n'.join(message))
 
 
 class ListBillsCommand(CommandBase):

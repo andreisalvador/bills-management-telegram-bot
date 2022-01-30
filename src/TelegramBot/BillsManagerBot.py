@@ -12,6 +12,7 @@ class BillsManagerBot:
     def __init__(self):
         self.__commands_registered = []
         self.__updater = Updater(os.environ['TELEGRAM_BOT_TOKEN'])
+        self.__schedulers = []
 
     def __commands(self, update: Update, context: CallbackContext) -> None:
         commands_descriptions = {}
@@ -33,6 +34,15 @@ class BillsManagerBot:
     def add_command(self, new_command):
         self.__commands_registered.append(new_command)
 
+    def add_scheduler(self, new_scheduler):
+        self.__schedulers.append(new_scheduler)
+
     def start_bot(self):
         self.__updater.start_polling()
+
+        for scheduler in self.__schedulers:
+            scheduler.start_jobs()
+
         self.__updater.idle()
+
+

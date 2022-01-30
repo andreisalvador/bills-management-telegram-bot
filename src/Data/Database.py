@@ -22,6 +22,7 @@ class Bill(Base):
     expiration_day = Column(SmallInteger)
     expiration_period = Column(Enum(PeriodEnum))
     user_id = Column(Integer)
+    created_at = Column(Date, default=datetime.datetime.now())
 
 class BillHistory(Base):
     __tablename__ = 'BillsHistory'
