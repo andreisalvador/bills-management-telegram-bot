@@ -14,15 +14,12 @@ class BillsHistoryScheduler:
         self.__scheduler = BlockingScheduler()
 
     def create_bills_history_for_monthly_bills(self):
-        today = datetime.datetime(2022, 2, 1)
+        today = datetime.datetime.now()
 
         if today.day == self.__execution_day:
-            print('entrou')
             monthly_bills = session.query(Bill).join(BillHistory, Bill.id == BillHistory.bill_id).filter(
                 Bill.expiration_period == PeriodEnum.Monthly, extract('day', Bill.created_at) < Bill.expiration_day,
                 Bill.created_at <= today, BillHistory.is_paid == False).all()
-
-            print(f'Bills len {len(monthly_bills)}')
 
             bills_histories = [create_new_bill_history_adding_months(bill.id, bill.expiration_day, 1) for
                                bill

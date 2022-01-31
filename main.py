@@ -5,6 +5,7 @@ from src.Commands.ListBillsStatusCommand import ListBillsStatusCommand
 from src.Commands.PayBillCommand import PayBillCommand
 from src.Commands.AddBillCommand import AddBillCommand
 from src.Commands.ListBillsCommand import ListBillsCommand
+from src.Commands.NextMonthBillsCommand import NextMonthBillsCommand
 from src.Schedulers.BillsHistoryScheduler import BillsHistoryScheduler
 from src.TelegramBot.BillsManagerBot import BillsManagerBot
 
@@ -25,6 +26,7 @@ def main() -> None:
     bot.add_command(PayBillCommand())
     bot.add_command(ListBillsStatusCommand())
     bot.add_command(DeleteBillCommand())
+    bot.add_command(NextMonthBillsCommand())
 
     bot.add_scheduler(BillsHistoryScheduler())
 

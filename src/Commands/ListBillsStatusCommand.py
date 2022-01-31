@@ -9,14 +9,15 @@ from src.Commands.Base.CommandBase import CommandBase
 
 
 def start(update: Update, context: CallbackContext):
-    bills_payed = session.query(Bill.name, BillHistory.payment_date, BillHistory.is_paid, BillHistory.expiration_date).join(BillHistory, Bill.id == BillHistory.bill_id).filter(
-        Bill.user_id == update.effective_user.id, extract('month', BillHistory.expiration_date) == datetime.datetime.now().month).all()
+    today = datetime.datetime.now()
+    current_month_bills = session.query(Bill.name, BillHistory.payment_date, BillHistory.is_paid, BillHistory.expiration_date).join(BillHistory, Bill.id == BillHistory.bill_id).filter(
+        Bill.user_id == update.effective_user.id, extract('month', BillHistory.expiration_date) == today.month, extract('year', BillHistory.expiration_date) == today.year).all()
 
-    has_bills_this_month = len(bills_payed) == 0
+    has_bills_this_month = len(current_month_bills) == 0
 
     message = 'There is no bills for this month' \
         if has_bills_this_month else \
-        [f'{bill[0]} was { f"not payed and expires on {bill[3]} " if bill[2] == False else f"payed in {bill[1]}" } {"✅" if bill[2] == True else "❌" }' for bill in bills_payed]
+        [f'{bill[0]} was { f"not payed and expires on {bill[3]} " if bill[2] == False else f"payed in {bill[1]}" } {"✅" if bill[2] == True else "❌" }' for bill in current_month_bills]
 
     update.message.reply_text(message if has_bills_this_month else '\n'.join(message))
 
