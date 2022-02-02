@@ -1,6 +1,7 @@
 import datetime
 
-from sqlalchemy import create_engine, Column, Integer, String, Enum, Numeric, SmallInteger, Boolean, ForeignKey, Date
+from sqlalchemy import create_engine, Column, String, Enum, Numeric, SmallInteger, Boolean, ForeignKey, Date, \
+    BigInteger
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
@@ -16,24 +17,24 @@ Base = declarative_base()
 class Bill(Base):
     __tablename__ = 'Bills'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
     name = Column(String)
     value = Column(Numeric)
     expiration_day = Column(SmallInteger)
     expiration_period = Column(Enum(PeriodEnum))
-    user_id = Column(Integer)
+    user_id = Column(BigInteger)
     created_at = Column(Date, default=datetime.datetime.now())
 
 class BillHistory(Base):
     __tablename__ = 'BillsHistory'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
     expiration_date = Column(Date, nullable=False)
     payment_date = Column(Date, nullable=True)
     is_paid = Column(Boolean, default=False)
     is_value_changed = Column(Boolean, default=False)
     value_payed = Column(Numeric, default=0)
-    bill_id = Column(Integer, ForeignKey('Bills.id'))
+    bill_id = Column(BigInteger, ForeignKey('Bills.id'))
 
 
 Base.metadata.create_all(engine)
