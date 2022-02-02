@@ -10,6 +10,7 @@ from src.Data.Database import session, Bill
 
 from src.Enums.PeriodEnum import PeriodEnum
 from src.Utils.BillsUtils import create_new_bill_history
+from src.Utils.ReplyMarkupUtils import create_reply_markup_options
 
 BILL_NAME, BILL_VALUE, EXPIRATION_PERIOD, EXPIRATION_DAY, SAVE = range(5)
 logger = logging.getLogger(__name__)
@@ -57,11 +58,11 @@ class AddBillCommand(CommandBase):
         return BILL_VALUE
 
     def set_bill_value_handler(self, update: Update, context: CallbackContext):
-        answers = InlineKeyboardMarkup([
-            [InlineKeyboardButton(PeriodEnum.Monthly.name, callback_data=str(PeriodEnum.Monthly.value))],
-            [InlineKeyboardButton(PeriodEnum.Quarterly.name, callback_data=str(PeriodEnum.Quarterly.value))],
-            [InlineKeyboardButton(PeriodEnum.Semiannual.name, callback_data=str(PeriodEnum.Semiannual.value))]
-        ])
+
+        answers = create_reply_markup_options({PeriodEnum.Monthly.name: str(PeriodEnum.Monthly.value),
+                                               PeriodEnum.Quarterly.name: str(PeriodEnum.Quarterly.value),
+                                               PeriodEnum.Semiannual.name: str(PeriodEnum.Semiannual.value)})
+        
         self.bill_value = update.message.text
         update.message.reply_text('Please, inform the expiration period', reply_markup=answers)
         return EXPIRATION_PERIOD

@@ -31,6 +31,8 @@ class BillHistory(Base):
     expiration_date = Column(Date, nullable=False)
     payment_date = Column(Date, nullable=True)
     is_paid = Column(Boolean, default=False)
+    is_value_changed = Column(Boolean, default=False)
+    value_payed = Column(Numeric, default=0)
     bill_id = Column(Integer, ForeignKey('Bills.id'))
 
 
