@@ -11,4 +11,4 @@ def create_reply_markup_options(messages_and_callbacks: Dict[str, str]) -> Inlin
 
 
 def create_confirmation_markup_yes_or_no_options() -> InlineKeyboardMarkup:
-    return create_reply_markup_options({'Yes': 'True', 'No': 'False'})
+    return create_reply_markup_options({'Yes': 1, 'No': 0})
