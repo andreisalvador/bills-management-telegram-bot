@@ -16,17 +16,20 @@ def start(update: Update, context: CallbackContext):
         .filter(Bill.user_id == update.effective_user.id,
                 extract('month', BillHistory.expiration_date) == current_month)
 
-    message = ['   Name    |    Value 💰   |    Paid    |    Value Paid  💸 ']
-    message += ['--------------------------------------------------------------------------']
-    message += [f'📄 {bill[0]} |    ${bill[1]}    |   {"✅" if bill[2] else "❌"}    |     ${bill[3]} '
-                for bill in bills_details]
+    if len(bills_details) == 0:
+        update.message.reply_text('There is no data to be displayed.')
+    else:
+        message = ['   Name    |    Value 💰   |    Paid    |    Value Paid  💸 ']
+        message += ['--------------------------------------------------------------------------']
+        message += [f'📄 {bill[0]} |    ${bill[1]}    |   {"✅" if bill[2] else "❌"}    |     ${bill[3]} '
+                  for bill in bills_details]
 
-    message += ['---------------------------------------------------------------------------']
-    message += [f'💰 Total estimated: {sum(bill[1] for bill in bills_details)} | 💸 Total paid: {sum(bill[3] for bill in bills_details)}']
-    message += ['---------------------------------------------------------------------------']
-    message += [f'🤑 Leftovers (estimated - paid): {sum(bill[1] - bill[3] for bill in bills_details)}']
+        message += ['---------------------------------------------------------------------------']
+        message += [f'💰 Total estimated: {sum(bill[1] for bill in bills_details)} | 💸 Total paid: {sum(bill[3] for bill in bills_details)}']
+        message += ['---------------------------------------------------------------------------']
+        message += [f'🤑 Leftovers (estimated - paid): {sum(bill[1] - bill[3] for bill in bills_details)}']
 
-    update.message.reply_text('\n'.join(message))
+        update.message.reply_text('\n'.join(message))
 
 
 class QuickMonthlyReportCommand(CommandBase):
