@@ -5,7 +5,7 @@ from src.Data.Database import session, Bill, BillHistory
 from src.Commands.Base.CommandBase import CommandBase
 from src.Utils.ReplyMarkupUtils import create_confirmation_markup_yes_or_no_options
 
-DELETE_CONFIRMATION, DELETE_BILL, SAVE = range(2)
+DELETE_CONFIRMATION, DELETE_BILL = range(2)
 
 
 def start(update: Update, context: CallbackContext):
