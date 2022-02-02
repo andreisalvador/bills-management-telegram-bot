@@ -76,7 +76,7 @@ class DeleteBillCommand(CommandBase):
             entry_points=[CommandHandler(self.command_name, start)],
             states={
                 DELETE_BILL: [CallbackQueryHandler(delete_bill_handler)],
-                DELETE_CONFIRMATION: [CallbackQueryHandler(delete_confirmation_handler())]
+                DELETE_CONFIRMATION: [CallbackQueryHandler(delete_confirmation_handler)]
             },
             fallbacks=[CommandHandler('cancel', cancel)]
         )
