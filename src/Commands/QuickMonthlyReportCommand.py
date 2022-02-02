@@ -14,7 +14,7 @@ def start(update: Update, context: CallbackContext):
     bills_details = session.query(Bill.name, Bill.value, BillHistory.is_paid, BillHistory.value_payed) \
         .join(Bill, BillHistory.bill_id == Bill.id) \
         .filter(Bill.user_id == update.effective_user.id,
-                extract('month', BillHistory.expiration_date) == current_month)
+                extract('month', BillHistory.expiration_date) == current_month).all()
 
     if len(bills_details) == 0:
         update.message.reply_text('There is no data to be displayed.')
