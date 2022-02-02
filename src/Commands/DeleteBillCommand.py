@@ -34,7 +34,7 @@ def delete_confirmation_handler(update: Update, context: CallbackContext):
     selected_bill = [bill for bill in context.user_data['user_bills'] if bill.id == int(bill_selected_id)][0]
 
     update.callback_query.edit_message_text(f'Are you sure you want to delete {selected_bill.name} ?',
-                                            create_confirmation_markup_yes_or_no_options())
+                                            reply_markup=create_confirmation_markup_yes_or_no_options())
 
     return DELETE_BILL
 
