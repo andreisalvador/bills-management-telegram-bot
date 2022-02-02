@@ -40,7 +40,7 @@ def delete_confirmation_handler(update: Update, context: CallbackContext):
 
 
 def delete_bill_handler(update: Update, context: CallbackContext):
-    should_delete_bill = bool(update.callback_query.data)
+    should_delete_bill = bool(int(update.callback_query.data))
 
     update.callback_query.edit_message_reply_markup(None)
 
