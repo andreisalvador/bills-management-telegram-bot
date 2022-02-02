@@ -3,8 +3,9 @@ from telegram.ext import CommandHandler, CallbackContext, ConversationHandler, C
 from src.Data.Database import session, Bill, BillHistory
 
 from src.Commands.Base.CommandBase import CommandBase
+from src.Utils.ReplyMarkupUtils import create_confirmation_markup_yes_or_no_options
 
-DELETE = 0
+DELETE_CONFIRMATION, DELETE_BILL, SAVE = range(2)
 
 
 def start(update: Update, context: CallbackContext):
@@ -19,22 +20,40 @@ def start(update: Update, context: CallbackContext):
     bills_options = InlineKeyboardMarkup(
         [[InlineKeyboardButton(bill.name, callback_data=bill.id) for bill in user_bills]])
 
+    context.user_data['user_bills'] = user_bills
+
     update.message.reply_text('Which bill do you want to delete?', reply_markup=bills_options)
 
-    return DELETE
+    return DELETE_CONFIRMATION
 
 
-def delete_bill(update: Update, context: CallbackContext):
-    selected_bill = int(update.callback_query.data)
+def delete_confirmation_handler(update: Update, context: CallbackContext):
+    bill_selected_id = int(update.callback_query.data)
+    context.user_data['selected_bill_to_delete'] = bill_selected_id
+
+    selected_bill = [bill for bill in context.user_data['user_bills'] if bill.id == int(bill_selected_id)][0]
+
+    update.callback_query.edit_message_text(f'Are you sure you want to delete {selected_bill.name} ?',
+                                            create_confirmation_markup_yes_or_no_options())
+
+    return DELETE_BILL
+
+
+def delete_bill_handler(update: Update, context: CallbackContext):
+    should_delete_bill = bool(update.callback_query.data)
 
     update.callback_query.edit_message_reply_markup(None)
 
-    session.query(BillHistory).filter(BillHistory.bill_id == selected_bill).delete()
-    session.query(Bill).filter(Bill.id == selected_bill).delete()
+    if should_delete_bill:
+        selected_bill_id = context.user_data['selected_bill_to_delete']
+        session.query(BillHistory).filter(BillHistory.bill_id == selected_bill_id).delete()
+        session.query(Bill).filter(Bill.id == selected_bill_id).delete()
 
-    session.commit()
+        session.commit()
 
-    update.callback_query.edit_message_text('Bill deleted.')
+        update.callback_query.edit_message_text('Bill deleted.')
+    else:
+        update.callback_query.edit_message_text('Alright, the bill was not deleted.')
 
     return ConversationHandler.END
 
@@ -56,7 +75,8 @@ class DeleteBillCommand(CommandBase):
         return ConversationHandler(
             entry_points=[CommandHandler(self.command_name, start)],
             states={
-                DELETE: [CallbackQueryHandler(delete_bill)]
+                DELETE_BILL: [CallbackQueryHandler(delete_bill_handler)],
+                DELETE_CONFIRMATION: [CallbackQueryHandler(delete_confirmation_handler())]
             },
             fallbacks=[CommandHandler('cancel', cancel)]
         )
