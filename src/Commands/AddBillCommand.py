@@ -46,7 +46,7 @@ class AddBillCommand(CommandBase):
         self.expiration_day = 1
         self.expiration_period = PeriodEnum.Monthly
 
-    def create_new_bill(self, user_id) -> Bill:
+    def create_new_bill(self, user_id: int) -> Bill:
         return Bill(name=self.bill_name, value=self.bill_value, expiration_day=self.expiration_day,
                     expiration_period=self.expiration_period, user_id=user_id)
 
