@@ -19,7 +19,7 @@ def start(update: Update, context: CallbackContext):
     if len(bills_details) == 0:
         update.message.reply_text('There is no data to be displayed.')
     else:
-        message = ['   Name    |    Value 💰   |    Paid    |    Value Paid  💸 ']
+        message = ['   Name    |    Value 💰   |    Paid    |  Value Paid  💸 ']
         message += ['------------------------------------------------------------------------']
         message += [f'📄 {bill[0]} |    ${bill[1]}    |   {"✅" if bill[2] else "❌"}    |     ${bill[3]} '
                   for bill in bills_details]
