@@ -6,14 +6,15 @@ from telegram.ext import ConversationHandler, CommandHandler, CallbackContext, C
 from src.Data.Database import session, Bill, BillHistory
 
 from src.Commands.Base.CommandBase import CommandBase
-from src.Utils.ReplyMarkupUtils import create_reply_markup_options
+from src.Utils.ReplyMarkupUtils import create_reply_markup_options, create_confirmation_markup_true_or_false_results, \
+    get_true_or_false_markup_result
 
 IDENTIFY_BILL_VALUE, NEW_VALUE, IDENTIFY_BILL_SITUATION, PAY_BILL = range(4)
 
 
 def confirmation_message(update: Update, context: CallbackContext):
     context.bot.send_message(chat_id=update.effective_chat.id, text='Can we confirm the payment?',
-                             reply_markup=create_reply_markup_options({'Yes': 'True', 'No': 'False'}))
+                             reply_markup=create_confirmation_markup_true_or_false_results())
 
 
 def start(update: Update, context: CallbackContext):
@@ -38,7 +39,7 @@ def cancel(update: Update, context: CallbackContext):
 
 
 def identify_bill_value_handler(update: Update, context: CallbackContext):
-    paid_different_value = update.callback_query.data == 'True'
+    paid_different_value = get_true_or_false_markup_result(update)
     context.user_data['is_value_changed'] = paid_different_value
 
     update.callback_query.edit_message_reply_markup(None)
@@ -71,7 +72,7 @@ def identify_bill_situation_handler(update: Update, context: CallbackContext):
 
     update.callback_query.edit_message_text(f'{selected_bill.name} selected.')
 
-    options = create_reply_markup_options({'I paid a different value': 'True', 'I paid the value mentioned': 'False'})
+    options = create_confirmation_markup_true_or_false_results('I paid a different value', 'I paid the value mentioned')
 
     context.bot.send_message(chat_id=update.effective_chat.id,
                              text=f'You paid {selected_bill[1]} with value {selected_bill[2]} ?', reply_markup=options)
@@ -81,6 +82,13 @@ def identify_bill_situation_handler(update: Update, context: CallbackContext):
 
 
 def pay_bill_handler(update: Update, context: CallbackContext):
+    confirmed_payment = get_true_or_false_markup_result(update)
+
+    if not confirmed_payment:
+        update.callback_query.edit_message_reply_markup(None)
+        update.callback_query.edit_message_text('Alright, payment process cancelled!')
+        return ConversationHandler.END
+
     value_paid = context.user_data['value_paid']
     selected_bill_id = context.user_data['selected_bill_id']
     is_value_changed = context.user_data['is_value_changed']

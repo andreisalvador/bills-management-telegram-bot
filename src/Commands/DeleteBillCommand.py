@@ -3,7 +3,7 @@ from telegram.ext import CommandHandler, CallbackContext, ConversationHandler, C
 from src.Data.Database import session, Bill, BillHistory
 
 from src.Commands.Base.CommandBase import CommandBase
-from src.Utils.ReplyMarkupUtils import create_confirmation_markup_yes_or_no_options
+from src.Utils.ReplyMarkupUtils import create_confirmation_markup_true_or_false_results, get_true_or_false_markup_result
 
 DELETE_CONFIRMATION, DELETE_BILL = range(2)
 
@@ -34,13 +34,13 @@ def delete_confirmation_handler(update: Update, context: CallbackContext):
     selected_bill = [bill for bill in context.user_data['user_bills'] if bill.id == int(bill_selected_id)][0]
 
     update.callback_query.edit_message_text(f'Are you sure you want to delete {selected_bill.name} ?',
-                                            reply_markup=create_confirmation_markup_yes_or_no_options())
+                                            reply_markup=create_confirmation_markup_true_or_false_results())
 
     return DELETE_BILL
 
 
 def delete_bill_handler(update: Update, context: CallbackContext):
-    should_delete_bill = bool(int(update.callback_query.data))
+    should_delete_bill = get_true_or_false_markup_result(update)
 
     update.callback_query.edit_message_reply_markup(None)
 

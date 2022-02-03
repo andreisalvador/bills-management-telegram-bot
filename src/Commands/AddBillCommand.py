@@ -10,7 +10,8 @@ from src.Data.Database import session, Bill
 
 from src.Enums.PeriodEnum import PeriodEnum
 from src.Utils.BillsUtils import create_new_bill_history
-from src.Utils.ReplyMarkupUtils import create_reply_markup_options
+from src.Utils.ReplyMarkupUtils import create_reply_markup_options, create_confirmation_markup_true_or_false_results, \
+    get_true_or_false_markup_result
 
 BILL_NAME, BILL_VALUE, EXPIRATION_PERIOD, EXPIRATION_DAY, SAVE = range(5)
 logger = logging.getLogger(__name__)
@@ -50,7 +51,7 @@ class AddBillCommand(CommandBase):
                     expiration_period=self.expiration_period, user_id=user_id)
 
     def get_adding_confirmation_message(self) -> str:
-        return f'You are adding {self.bill_name} with a value of {self.bill_value}, expiration period {self.expiration_period.name} and expiration day {self.expiration_day}, right? '
+        return f'You are adding {self.bill_name} with a value of ${self.bill_value}, expiration period {self.expiration_period.name} and expiration day {self.expiration_day}, right? '
 
     def set_bill_name_handler(self, update: Update, context: CallbackContext):
         self.bill_name = update.message.text
@@ -78,10 +79,7 @@ class AddBillCommand(CommandBase):
         return EXPIRATION_DAY
 
     def set_expiration_day_handler(self, update: Update, context: CallbackContext):
-        answers = InlineKeyboardMarkup([
-            [InlineKeyboardButton('Yes', callback_data='True')],
-            [InlineKeyboardButton('No', callback_data='False')]
-        ])
+        answers = create_confirmation_markup_true_or_false_results()
         self.expiration_day = update.message.text
         update.message.reply_text(self.get_adding_confirmation_message(), reply_markup=answers)
         return SAVE
@@ -89,7 +87,7 @@ class AddBillCommand(CommandBase):
     def save_new_bill(self, update: Update, context: CallbackContext):
         update.callback_query.edit_message_reply_markup(None)
 
-        if update.callback_query.data == 'True':
+        if get_true_or_false_markup_result(update):
             new_bill = self.create_new_bill(update.effective_user.id)
             session.add(new_bill)
             session.flush()
