@@ -25,9 +25,9 @@ def start(update: Update, context: CallbackContext):
                   for bill in bills_details]
 
         message += ['------------------------------------------------------------------------']
-        message += [f'💰 Total estimated: {sum(bill[1] for bill in bills_details)} | 💸 Total paid: {sum(bill[3] for bill in bills_details)}']
+        message += [f'💰 Total estimated: ${sum(bill[1] for bill in bills_details)} | 💸 Total paid: ${sum(bill[3] for bill in bills_details)}']
         message += ['------------------------------------------------------------------------']
-        message += [f'🤑 Leftovers (estimated - paid): {sum(bill[1] - bill[3] if 0 < bill[3] <= bill[1] else 0 for bill in bills_details)}']
+        message += [f'🤑 Leftovers (estimated - paid): ${sum(bill[1] - bill[3] if 0 < bill[3] <= bill[1] else 0 for bill in bills_details)}']
 
         update.message.reply_text('\n'.join(message))
 
