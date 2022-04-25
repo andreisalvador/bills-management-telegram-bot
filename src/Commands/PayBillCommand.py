@@ -122,5 +122,7 @@ class PayBillCommand(CommandBase):
                 NEW_VALUE: [MessageHandler(Filters.regex(r'\d+'), new_value_handler)],
                 IDENTIFY_BILL_SITUATION: [CallbackQueryHandler(identify_bill_situation_handler)],
             },
-            fallbacks=[CommandHandler('cancel', cancel)]
+            fallbacks=[CommandHandler('cancel', cancel)],
+            conversation_timeout=30,
+            allow_reentry=True
         )

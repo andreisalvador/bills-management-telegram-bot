@@ -78,5 +78,7 @@ class DeleteBillCommand(CommandBase):
                 DELETE_BILL: [CallbackQueryHandler(delete_bill_handler)],
                 DELETE_CONFIRMATION: [CallbackQueryHandler(delete_confirmation_handler)]
             },
-            fallbacks=[CommandHandler('cancel', cancel)]
+            fallbacks=[CommandHandler('cancel', cancel)],
+            conversation_timeout=30,
+            allow_reentry=True
         )

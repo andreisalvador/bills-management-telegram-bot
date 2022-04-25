@@ -114,4 +114,6 @@ class AddBillCommand(CommandBase):
                 SAVE: [CallbackQueryHandler(self.save_new_bill)]
             },
             fallbacks=[CommandHandler('cancel', add_bill_cancel)],
+            conversation_timeout=30,
+            allow_reentry=True
         )
